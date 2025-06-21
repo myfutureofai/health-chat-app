@@ -217,7 +217,7 @@ window.onload = () => {
   const wallpaperInput = document.getElementById('wallpaperInput');
   const applyWallpaperBtn = document.getElementById('applyWallpaperBtn');
   const cancelWallpaperBtn = document.getElementById('cancelWallpaperBtn');
-  const navTabs = document.querySelectorAll('nav div');
+  const navTabs = document.querySelectorAll('nav button');
 
   summaryBtn?.addEventListener('click', async () => {
     const apiKey = getApiKey();
