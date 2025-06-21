@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Health Chat App</title>
+  <link rel="manifest" href="manifest.json">
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('Service worker registered.'))
+        .catch(err => console.error('Service worker registration failed:', err));
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: sans-serif; margin: 0; padding: 1rem; background: #f0f0f0; }
+    #chat { max-width: 600px; margin: auto; background: white; padding: 1rem; border-radius: 1rem; }
+    .message { margin: 0.5rem 0; }
+    .user { text-align: right; color: blue; }
+    .bot { text-align: left; color: green; }
+    #fileUpload, #imageUpload, #wallpaperUpload {
+      display: block;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="chat">
+    <div id="messages"></div>
+    <div id="inputContainer">
+      <input type="text" id="userInput" placeholder="Enter something..." />
+      <button id="sendBtn">Send</button>
+      <button id="summaryBtn">Summary</button>
+      <input type="file" id="imageUpload" accept="image/*" />
+      <input type="file" id="fileUpload" />
+      <input type="file" id="wallpaperUpload" accept="image/*" />
+    </div>
+  </div>
+
+  <script>
+    const messagesDiv = document.getElementById('messages');
+    const userInput = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const summaryBtn = document.getElementById('summaryBtn');
+    const imageUpload = document.getElementById('imageUpload');
+    const fileUpload = document.getElementById('fileUpload');
+    const wallpaperUpload = document.getElementById('wallpaperUpload');
+
+    const appendMessage = (msg, sender) => {
+      const p = document.createElement('p');
+      p.className = `message ${sender}`;
+      p.textContent = msg;
+      messagesDiv.appendChild(p);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+      const log = JSON.parse(localStorage.getItem('chatLog') || '[]');
+      log.push({ msg, sender, timestamp: new Date().toISOString() });
+      localStorage.setItem('chatLog', JSON.stringify(log));
+    };
+
+    sendBtn.onclick = async () => {
+      const input = userInput.value.trim();
+      if (!input) return;
+      appendMessage(input, 'user');
+      userInput.value = '';
+    };
+
+    imageUpload.addEventListener('change', async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      appendMessage("🖼️ Analyzing image for calorie estimate...", 'bot');
+
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64Image = reader.result.split(',')[1];
+
+        try {
+          const res = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Authorization': 'Bearer YOUR_API_KEY_HERE',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              model: 'gpt-4-vision-preview',
+              messages: [
+                {
+                  role: 'system',
+                  content: 'You are a diet coach. Estimate calories and provide advice based on food photos.'
+                },
+                {
+                  role: 'user',
+                  content: [
+                    { type: 'text', text: 'Estimate the calories and describe the food.' },
+                    { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${base64Image}` } }
+                  ]
+                }
+              ]
+            })
+          });
+
+          const result = await res.json();
+          const reply = result.choices?.[0]?.message?.content || 'Could not analyze image.';
+          appendMessage(reply, 'bot');
+        } catch (err) {
+          appendMessage("❌ Image analysis failed: " + err.message, 'bot');
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    fileUpload.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      appendMessage(`📎 Uploaded file: ${file.name}`, 'user');
+    });
+
+    wallpaperUpload.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        document.body.style.backgroundImage = `url(${reader.result})`;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundRepeat = 'no-repeat';
+        document.body.style.backgroundPosition = 'center';
+        appendMessage('🖼️ Wallpaper updated!', 'bot');
+      };
+      reader.readAsDataURL(file);
+    });
+  </script>
+</body>
+</html>
