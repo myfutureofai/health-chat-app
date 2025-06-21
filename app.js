@@ -134,7 +134,7 @@ async function syncMessages() {
 function switchTab(tabId) {
   document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
   document.getElementById(tabId)?.classList.add('active');
-  document.querySelectorAll('nav div').forEach(btn => {
+  document.querySelectorAll('nav button').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.tab === tabId);
   });
 }
