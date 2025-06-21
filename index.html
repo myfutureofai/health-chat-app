@@ -3,61 +3,59 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>Health Chat App</title>
   <meta name="theme-color" content="#00c853" />
+  <title>Health Chat App</title>
+
+  <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="favicon.ico" />
+  <meta name="mobile-web-app-capable" content="yes" />
 
-  <!-- Styles -->
+  <!-- Styles & Libraries -->
   <link rel="stylesheet" href="style.css" />
   <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css" rel="stylesheet" />
-
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.2/color-thief.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.2/color-thief.umd.js" defer></script>
 </head>
 <body>
-  <!-- Main App Wrapper -->
-  <div class="app-wrapper glassmorphic">
-
+  <!-- Main App Container -->
+  <div id="app">
     <!-- Chat Section -->
-    <section id="chat" class="tab active">
+    <section id="chat" class="tab active glass-panel">
       <div id="chatContainer" class="chat-scroll"></div>
       <div class="inputRow">
         <input id="userInput" placeholder="Type your message..." />
-        <button id="sendBtn" class="btn primary">Send</button>
-        <button id="summaryBtn" class="btn ghost">📋</button>
+        <button id="sendBtn">➤</button>
+        <button id="summaryBtn" title="Generate Summary">📋</button>
       </div>
     </section>
 
-    <!-- Dashboard -->
-    <section id="dashboard" class="tab">
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="tab glass-panel">
       <h2>📊 Dashboard</h2>
-      <p>🧠 Your health insights will appear here.</p>
+      <p>Your health insights will appear here.</p>
     </section>
 
-    <!-- Settings -->
-    <section id="settings" class="tab">
+    <!-- Settings Section -->
+    <section id="settings" class="tab glass-panel">
       <h2>⚙️ Settings</h2>
-      <button class="btn full" onclick="changeApiKey()">🔑 Change API Key</button>
+      <button onclick="changeApiKey()">🔑 Update OpenAI API Key</button>
 
-      <div class="setting-group">
-        <label for="motivationInterval">⏰ Reminder (mins)</label>
-        <input id="motivationInterval" type="number" min="1" max="180" />
-        <button class="btn small" onclick="saveMotivationSettings()">Save</button>
+      <div class="settings-group">
+        <label>⏰ Motivation Interval (mins)</label>
+        <input type="number" id="motivationInterval" min="1" max="180" />
+        <button onclick="saveMotivationSettings()">💾 Save</button>
       </div>
 
-      <button class="btn outline" onclick="toggleModel()">🔁 Switch Model</button>
+      <button onclick="toggleModel()">🔁 Switch Model</button>
 
-      <div class="setting-group">
-        <label>🖼️ Change Wallpaper</label>
+      <div class="wallpaper-section">
         <input type="file" id="wallpaperInput" accept="image/*" />
-        <div id="wallpaperCropperContainer">
+        <div id="wallpaperCropperContainer" class="cropper-hidden">
           <img id="wallpaperPreview" />
-          <div class="crop-buttons">
-            <button id="applyWallpaperBtn" class="btn success">✅ Apply</button>
-            <button id="cancelWallpaperBtn" class="btn danger">❌ Cancel</button>
+          <div class="cropper-buttons">
+            <button id="applyWallpaperBtn">✅ Apply</button>
+            <button id="cancelWallpaperBtn">❌ Cancel</button>
           </div>
         </div>
       </div>
@@ -65,20 +63,19 @@
   </div>
 
   <!-- Bottom Navigation -->
-  <nav class="bottom-nav">
-    <div data-tab="chat" class="active">💬</div>
-    <div data-tab="dashboard">📊</div>
-    <div data-tab="settings">⚙️</div>
+  <nav class="bottom-nav glass-panel">
+    <button data-tab="chat" class="active">💬</button>
+    <button data-tab="dashboard">📈</button>
+    <button data-tab="settings">⚙️</button>
   </nav>
 
   <!-- Scripts -->
-  <script src="app.js"></script>
+  <script src="app.js" defer></script>
   <script>
-    // Register service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
-        .then(reg => console.log('✅ Service Worker registered:', reg.scope))
-        .catch(err => console.error('❌ Service Worker registration failed:', err));
+        .then(reg => console.log('✅ SW registered:', reg.scope))
+        .catch(err => console.error('❌ SW registration failed:', err));
     }
   </script>
 </body>
