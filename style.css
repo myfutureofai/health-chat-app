@@ -18,7 +18,6 @@ body {
   transition: background 0.5s ease;
 }
 
-/* NAVIGATION BAR */
 nav {
   display: flex;
   justify-content: space-around;
@@ -44,7 +43,6 @@ nav div.active {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* MAIN CONTENT */
 main {
   padding: 1rem;
 }
@@ -52,12 +50,10 @@ main {
 .tab {
   display: none;
 }
-
 .tab.active {
   display: block;
 }
 
-/* CHAT CONTAINER */
 #chatContainer {
   background: var(--glass-bg);
   backdrop-filter: blur(8px);
@@ -67,12 +63,11 @@ main {
   max-height: 55vh;
   overflow-y: auto;
   margin-bottom: 1rem;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
 }
 
-/* INPUT ROW */
 .inputRow {
   display: flex;
   gap: 0.5rem;
@@ -104,16 +99,16 @@ main {
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.3s ease;
-  min-width: 44px;
 }
 
 .inputRow button:hover {
   background-color: #0056b3;
 }
 
-/* MESSAGE BUBBLES */
 .user, .bot {
-  margin: 0.5rem 0;
+  clear: both;
+  display: inline-block;
+  margin: 0.3rem 0;
   padding: 0.75rem 1rem;
   border-radius: 10px;
   max-width: 80%;
@@ -126,16 +121,17 @@ main {
 .user {
   background-color: rgba(0, 123, 255, 0.3);
   align-self: flex-end;
+  float: right;
   text-align: right;
 }
 
 .bot {
   background-color: rgba(255, 255, 255, 0.1);
   align-self: flex-start;
+  float: left;
   text-align: left;
 }
 
-/* WALLPAPER CROPPER */
 #wallpaperCropperContainer {
   display: none;
   margin-top: 1rem;
@@ -158,7 +154,6 @@ main {
   display: block;
 }
 
-/* SETTINGS BUTTONS */
 section button {
   margin: 0.3rem 0;
   padding: 0.6rem 1rem;
@@ -176,7 +171,6 @@ section button:hover {
   background-color: #0056b3;
 }
 
-/* INPUT TYPE */
 input[type="number"] {
   padding: 0.5rem;
   border-radius: 6px;
@@ -185,7 +179,7 @@ input[type="number"] {
   font-size: 1rem;
 }
 
-/* MOBILE STYLING */
+/* Mobile-specific tweaks */
 .mobile nav {
   position: fixed;
   bottom: 0;
@@ -196,29 +190,16 @@ input[type="number"] {
   backdrop-filter: blur(6px);
   background: rgba(0, 0, 0, 0.4);
   border-top: 1px solid var(--glass-border);
-  z-index: 100;
 }
 
 .mobile main {
-  padding-bottom: 120px;
+  padding-bottom: 80px;
 }
 
-.mobile .inputRow {
-  position: fixed;
-  bottom: 60px;
-  left: 0;
-  right: 0;
-  padding: 0.75rem;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(6px);
-  z-index: 99;
-}
-
-/* DESKTOP STYLING */
+/* Desktop layout constraints */
 .desktop nav {
   flex-direction: row;
 }
-
 .desktop main {
   max-width: 800px;
   margin: auto;
