@@ -17,17 +17,17 @@
   <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.2/color-thief.umd.js"></script>
 </head>
-
 <body>
-  <!-- Main Content -->
-  <main>
+  <!-- Main App Wrapper -->
+  <div class="app-wrapper glassmorphic">
+
     <!-- Chat Section -->
     <section id="chat" class="tab active">
-      <div id="chatContainer" class="glass-container"></div>
+      <div id="chatContainer" class="chat-scroll"></div>
       <div class="inputRow">
         <input id="userInput" placeholder="Type your message..." />
-        <button id="sendBtn" class="glass-btn">📨</button>
-        <button id="summaryBtn" class="glass-btn">📋</button>
+        <button id="sendBtn" class="btn primary">Send</button>
+        <button id="summaryBtn" class="btn ghost">📋</button>
       </div>
     </section>
 
@@ -40,32 +40,41 @@
     <!-- Settings -->
     <section id="settings" class="tab">
       <h2>⚙️ Settings</h2>
-      <button class="glass-btn" onclick="changeApiKey()">🔑 Change OpenAI API Key</button>
+      <button class="btn full" onclick="changeApiKey()">🔑 Change API Key</button>
+
       <div class="setting-group">
-        <label>⏰ Motivational Reminder (mins):</label>
+        <label for="motivationInterval">⏰ Reminder (mins)</label>
         <input id="motivationInterval" type="number" min="1" max="180" />
-        <button class="glass-btn" onclick="saveMotivationSettings()">Save</button>
+        <button class="btn small" onclick="saveMotivationSettings()">Save</button>
       </div>
-      <button class="glass-btn" onclick="toggleModel()">🔁 Switch Model</button>
-      <input type="file" id="wallpaperInput" accept="image/*" />
-      <div id="wallpaperCropperContainer" class="glass-container">
-        <img id="wallpaperPreview" />
-        <button id="applyWallpaperBtn" class="glass-btn">✅ Apply</button>
-        <button id="cancelWallpaperBtn" class="glass-btn">❌ Cancel</button>
+
+      <button class="btn outline" onclick="toggleModel()">🔁 Switch Model</button>
+
+      <div class="setting-group">
+        <label>🖼️ Change Wallpaper</label>
+        <input type="file" id="wallpaperInput" accept="image/*" />
+        <div id="wallpaperCropperContainer">
+          <img id="wallpaperPreview" />
+          <div class="crop-buttons">
+            <button id="applyWallpaperBtn" class="btn success">✅ Apply</button>
+            <button id="cancelWallpaperBtn" class="btn danger">❌ Cancel</button>
+          </div>
+        </div>
       </div>
     </section>
-  </main>
+  </div>
 
   <!-- Bottom Navigation -->
   <nav class="bottom-nav">
-    <div data-tab="chat" class="nav-item active">💬</div>
-    <div data-tab="dashboard" class="nav-item">📈</div>
-    <div data-tab="settings" class="nav-item">⚙️</div>
+    <div data-tab="chat" class="active">💬</div>
+    <div data-tab="dashboard">📊</div>
+    <div data-tab="settings">⚙️</div>
   </nav>
 
   <!-- Scripts -->
   <script src="app.js"></script>
   <script>
+    // Register service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
         .then(reg => console.log('✅ Service Worker registered:', reg.scope))
