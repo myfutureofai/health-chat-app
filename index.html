@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <title>Health Chat App</title>
   <meta name="theme-color" content="#00c853" />
   <link rel="manifest" href="manifest.json" />
@@ -19,18 +18,18 @@
 </head>
 
 <body>
-  <!-- Navigation -->
-  <nav>
-    <div data-tab="chat" class="active">Chat</div>
-    <div data-tab="dashboard">Dashboard</div>
-    <div data-tab="settings">Settings</div>
+  <!-- Frosted Glass Navigation -->
+  <nav class="glass-nav">
+    <div data-tab="chat" class="active">💬 Chat</div>
+    <div data-tab="dashboard">📊 Dashboard</div>
+    <div data-tab="settings">⚙️ Settings</div>
   </nav>
 
-  <!-- Main Content -->
+  <!-- Main App Container -->
   <main>
-    <!-- Chat Section -->
-    <section id="chat" class="tab active">
-      <div id="chatContainer"></div>
+    <!-- Chat Tab -->
+    <section id="chat" class="tab active glass-section">
+      <div id="chatContainer" class="chat-scroll"></div>
       <div class="inputRow">
         <input id="userInput" placeholder="Type your message..." />
         <button id="sendBtn">Send</button>
@@ -38,36 +37,41 @@
       </div>
     </section>
 
-    <!-- Dashboard -->
-    <section id="dashboard" class="tab">
-      <h2>📊 Dashboard</h2>
-      <p>🧠 Your health insights will appear here.</p>
+    <!-- Dashboard Tab -->
+    <section id="dashboard" class="tab glass-section">
+      <h2>📊 Your Health Dashboard</h2>
+      <p>🧠 Personalized insights will appear here.</p>
     </section>
 
-    <!-- Settings -->
-    <section id="settings" class="tab">
-      <h2>⚙️ Settings</h2>
+    <!-- Settings Tab -->
+    <section id="settings" class="tab glass-section">
+      <h2>⚙️ App Settings</h2>
+
       <button onclick="changeApiKey()">🔑 Change OpenAI API Key</button>
       <br /><br />
+
       <label>⏰ Motivational Reminder (mins):</label>
       <input id="motivationInterval" type="number" min="1" max="180" />
       <button onclick="saveMotivationSettings()">Save</button>
       <br /><br />
-      <button onclick="toggleModel()">🔁 Switch Model</button>
+
+      <button onclick="toggleModel()">🔁 Switch AI Model</button>
       <br /><br />
+
+      <label>🖼️ Custom Wallpaper:</label>
       <input type="file" id="wallpaperInput" accept="image/*" />
       <div id="wallpaperCropperContainer">
         <img id="wallpaperPreview" />
-        <button id="applyWallpaperBtn">✅ Apply Wallpaper</button>
+        <button id="applyWallpaperBtn">✅ Apply</button>
         <button id="cancelWallpaperBtn">❌ Cancel</button>
       </div>
     </section>
   </main>
 
-  <!-- Scripts -->
+  <!-- JS Scripts -->
   <script src="app.js"></script>
   <script>
-    // Register service worker
+    // PWA support
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
         .then(reg => console.log('✅ Service Worker registered:', reg.scope))
