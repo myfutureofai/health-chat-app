@@ -1,116 +1,72 @@
 :root {
-  --theme-color: #00c853;
+  --theme-color: #007bff;
   --text-color: #ffffff;
   --background-color: #121212;
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-blur: 15px;
+  --glass-bg: rgba(255, 255, 255, 0.1);
   --glass-border: rgba(255, 255, 255, 0.2);
-}
-
-* {
-  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  font-family: 'Segoe UI', 'Roboto', sans-serif;
-  background: var(--background-color);
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--background-color);
   background-size: cover;
-  background-position: center;
+  background-position: center center;
   background-repeat: no-repeat;
   background-attachment: fixed;
   color: var(--text-color);
   transition: background 0.5s ease;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
 }
 
-/* Navigation Bar */
 nav {
   display: flex;
   justify-content: space-around;
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  border-bottom: 1px solid var(--glass-border);
-  padding: 1rem 0;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: var(--theme-color);
+  color: #fff;
   position: sticky;
   top: 0;
-  z-index: 999;
+  z-index: 10;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 nav div {
-  flex: 1;
-  text-align: center;
+  padding: 0.6rem 1rem;
   cursor: pointer;
-  padding: 0.6rem 0.8rem;
-  border-radius: 10px;
-  font-weight: 500;
-  transition: background-color 0.3s;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+  font-weight: bold;
 }
 
 nav div.active {
-  background: var(--theme-color);
-  color: #fff;
-  box-shadow: 0 0 10px var(--theme-color);
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Main Content */
 main {
-  flex: 1;
   padding: 1rem;
-  backdrop-filter: blur(var(--glass-blur));
 }
 
-/* Tabs */
 .tab {
   display: none;
 }
 
 .tab.active {
   display: block;
-  animation: fadeIn 0.4s ease;
 }
 
-/* Chat Section */
 #chatContainer {
   background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
   padding: 1rem;
-  max-height: 60vh;
+  max-height: 55vh;
   overflow-y: auto;
   margin-bottom: 1rem;
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
-.user, .bot {
-  margin: 0.5rem 0;
-  padding: 0.75rem 1rem;
-  border-radius: 12px;
-  max-width: 80%;
-  clear: both;
-  word-wrap: break-word;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-  animation: fadeIn 0.3s ease;
-}
-
-.user {
-  background-color: rgba(0, 123, 255, 0.25);
-  color: #e3f2fd;
-  float: right;
-  text-align: right;
-}
-
-.bot {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-  float: left;
-}
-
-/* Input Row */
 .inputRow {
   display: flex;
   gap: 0.5rem;
@@ -120,35 +76,67 @@ main {
 .inputRow input {
   flex: 1;
   padding: 0.7rem 1rem;
-  border-radius: 10px;
+  border-radius: 8px;
   border: none;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  font-size: 1rem;
   outline: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  backdrop-filter: blur(4px);
+}
+
+.inputRow input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .inputRow button {
+  padding: 0.65rem 1.1rem;
   background-color: var(--theme-color);
-  border: none;
   color: white;
-  border-radius: 10px;
-  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(0, 200, 83, 0.3);
-  transition: all 0.3s ease;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
 }
 
 .inputRow button:hover {
-  box-shadow: 0 0 12px var(--theme-color);
-  transform: scale(1.05);
+  background-color: #0056b3;
 }
 
-/* Wallpaper Cropper Section */
+.user, .bot {
+  margin: 0.5rem 0;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  max-width: 80%;
+  word-wrap: break-word;
+  background: var(--glass-bg);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--glass-border);
+}
+
+.user {
+  background-color: rgba(0, 123, 255, 0.3);
+  align-self: flex-end;
+  float: right;
+  text-align: right;
+}
+
+.bot {
+  background-color: rgba(255, 255, 255, 0.1);
+  align-self: flex-start;
+  float: left;
+  text-align: left;
+}
+
 #wallpaperCropperContainer {
   display: none;
-  margin-top: 1.5rem;
-  text-align: center;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+  border: 1px dashed var(--glass-border);
 }
 
 #wallpaperCropperContainer.show {
@@ -159,60 +147,56 @@ main {
   max-width: 100%;
   max-height: 300px;
   margin-bottom: 1rem;
-  border-radius: 12px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  border-radius: 8px;
+  display: block;
 }
 
-/* Buttons inside settings */
-#applyWallpaperBtn,
-#cancelWallpaperBtn {
-  margin: 0.5rem;
-  padding: 0.6rem 1.2rem;
+section button {
+  margin: 0.3rem 0;
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
   border-radius: 8px;
-  font-weight: 600;
-  border: none;
   background-color: var(--theme-color);
   color: white;
+  border: none;
   cursor: pointer;
-  transition: background 0.3s ease;
+  font-weight: bold;
+  transition: all 0.3s ease;
 }
 
-#cancelWallpaperBtn {
-  background-color: #e53935;
+section button:hover {
+  background-color: #0056b3;
 }
 
-#applyWallpaperBtn:hover,
-#cancelWallpaperBtn:hover {
-  opacity: 0.9;
+input[type="number"] {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: none;
+  margin: 0.5rem 0;
+  font-size: 1rem;
 }
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+.mobile nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  justify-content: space-between;
+  padding: 0.75rem 0.5rem;
+  font-size: 0.9rem;
+  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.4);
+  border-top: 1px solid var(--glass-border);
 }
 
-/* Scrollbar Styling */
-::-webkit-scrollbar {
-  width: 8px;
+.mobile main {
+  padding-bottom: 80px;
 }
 
-::-webkit-scrollbar-thumb {
-  background: var(--theme-color);
-  border-radius: 10px;
+.desktop nav {
+  flex-direction: row;
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-  nav div {
-    font-size: 0.9rem;
-  }
-
-  #chatContainer {
-    max-height: 50vh;
-  }
+.desktop main {
+  max-width: 800px;
+  margin: auto;
 }
