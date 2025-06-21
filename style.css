@@ -268,3 +268,91 @@ input[type="number"] {
   max-width: 800px;
   margin: auto;
 }
+
+/* === Improved UI Overrides === */
+
+/* General spacing & layout */
+main {
+  padding: 1rem 0.8rem 5rem;
+}
+
+/* Glass panels more card-like */
+.glass-panel {
+  border-radius: 18px;
+  padding: 1.2rem;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+}
+
+/* Input styling */
+.inputRow input {
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.inputRow button {
+  border-radius: 12px;
+  font-size: 1.3rem;
+  padding: 0.9rem 1.2rem;
+}
+
+/* Chat bubbles */
+.user,
+.bot {
+  border-radius: 14px;
+  padding: 1rem 1.2rem;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.user {
+  background-color: rgba(0, 140, 255, 0.4);
+}
+
+.bot {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Settings inputs/buttons */
+#settings input,
+#settings button {
+  margin-top: 0.6rem;
+  font-size: 1.1rem;
+  width: 100%;
+}
+
+#settings .settings-group {
+  margin-top: 1.2rem;
+}
+
+/* Bottom nav bar modern styling */
+nav.bottom-nav {
+  background: var(--glass-bg);
+  border-radius: 24px 24px 0 0;
+  margin: 0 auto;
+  max-width: 600px;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  width: 90%;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+nav.bottom-nav button {
+  font-size: 1.4rem;
+  padding: 0.8rem;
+}
+
+nav.bottom-nav button.active {
+  background-color: rgba(255,255,255,0.15);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+/* Scroll area soft scroll */
+#chatContainer {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+}
+
