@@ -74,7 +74,10 @@
 
       const reader = new FileReader();
       reader.onload = async () => {
-        const base64Image = reader.result.split(',')[1];
+        const dataURL = reader.result;
+        const mimeMatch = dataURL.match(/^data:(image\/[^;]+);base64,/);
+        const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+        const base64Image = dataURL.replace(/^data:image\/[^;]+;base64,/, '');
 
         try {
           const res = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -94,7 +97,7 @@
                   role: 'user',
                   content: [
                     { type: 'text', text: 'Estimate the calories and describe the food.' },
-                    { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${base64Image}` } }
+                    { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64Image}` } }
                   ]
                 }
               ]
