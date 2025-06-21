@@ -93,26 +93,24 @@ nav.bottom-nav button:hover {
 /* Tabs: animated visibility instead of display: none */
 .tab {
   width: 100%;
-  visibility: hidden;
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
   transform: translateY(10px);
   transition: all 0.3s ease;
-  position: absolute;
-  top: 0;
-  left: 0;
+  display: none;
 }
 
 .tab.active {
-  visibility: visible;
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
   transform: translateY(0);
-  position: relative;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
+
 
 /* Glass panel style */
 .glass-panel {
