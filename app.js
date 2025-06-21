@@ -9,7 +9,7 @@ function getApiKey() {
 }
 
 function changeApiKey() {
-  const input = prompt("🔁 Enter new OpenAI API key:");
+  const input = prompt("🔐 Enter your OpenAI API key:");
   if (input) {
     localStorage.setItem('openai_api_key', input.trim());
     alert('✅ API key updated!');
@@ -18,10 +18,7 @@ function changeApiKey() {
 
 async function sendToOpenAI(userInput) {
   const apiKey = getApiKey();
-  if (!apiKey) {
-    appendMessage("⚠️ Please set your API key in Settings to chat.", 'bot');
-    return;
-  }
+  if (!apiKey) return appendMessage("⚠️ Please set your API key in Settings.", 'bot');
 
   try {
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -33,37 +30,31 @@ async function sendToOpenAI(userInput) {
       body: JSON.stringify({
         model: selectedModel,
         messages: [
-          { role: 'system', content: 'You are a health coach.' },
+          { role: 'system', content: 'You are a helpful health assistant.' },
           { role: 'user', content: userInput }
         ]
       })
     });
 
-    if (!res.ok) throw new Error(`API error: ${res.status}`);
     const data = await res.json();
     appendMessage(data.choices?.[0]?.message?.content || '🤖 No response.', 'bot');
-  } catch (error) {
-    console.error(error);
-    appendMessage("❌ Error contacting OpenAI.", 'bot');
+  } catch (err) {
+    console.error(err);
+    appendMessage('❌ Failed to reach OpenAI.', 'bot');
   }
 }
 
 function appendMessage(msg, sender) {
   const container = document.getElementById('chatContainer');
-  if (!container) return;
-
   const bubble = document.createElement('div');
-  bubble.className = sender;
-  bubble.textContent = msg;
+  bubble.className = `bubble ${sender}`;
+  bubble.innerHTML = msg.replace(/\n/g, '<br>'); // support newlines
+
   container.appendChild(bubble);
   container.scrollTop = container.scrollHeight;
 
-  let log = [];
-  try {
-    log = JSON.parse(localStorage.getItem('chatLog') || '[]');
-  } catch {
-    localStorage.removeItem('chatLog');
-  }
+  // Save log
+  const log = JSON.parse(localStorage.getItem('chatLog') || '[]');
   log.push({ msg, sender, timestamp: new Date().toISOString() });
   localStorage.setItem('chatLog', JSON.stringify(log));
 }
@@ -71,14 +62,19 @@ function appendMessage(msg, sender) {
 async function sendMessage(msg) {
   appendMessage(msg, 'user');
   if (navigator.onLine) {
-    try {
-      await sendToOpenAI(msg);
-    } catch {
-      await storeUnsentMessage({ msg, sender: 'user', timestamp: new Date().toISOString() });
-    }
+    await sendToOpenAI(msg);
   } else {
     await storeUnsentMessage({ msg, sender: 'user', timestamp: new Date().toISOString() });
   }
+}
+
+function switchTab(tabId) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(tabId)?.classList.add('active');
+
+  document.querySelectorAll('nav div').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === tabId);
+  });
 }
 
 function openDatabase() {
@@ -88,18 +84,14 @@ function openDatabase() {
       e.target.result.createObjectStore(storeName, { autoIncrement: true });
     };
     request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject('❌ IndexedDB error');
+    request.onerror = () => reject();
   });
 }
 
 async function storeUnsentMessage(message) {
-  try {
-    const db = await openDatabase();
-    const tx = db.transaction(storeName, 'readwrite');
-    tx.objectStore(storeName).add(message);
-  } catch (err) {
-    console.error("IndexedDB Store Error:", err);
-  }
+  const db = await openDatabase();
+  const tx = db.transaction(storeName, 'readwrite');
+  tx.objectStore(storeName).add(message);
 }
 
 async function syncMessages() {
@@ -113,40 +105,13 @@ async function syncMessages() {
 
     all.onsuccess = async () => {
       for (const msg of all.result) {
-        try {
-          await sendToOpenAI(msg.msg);
-        } catch {
-          break;
-        }
+        await sendToOpenAI(msg.msg);
       }
       store.clear();
-      if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification("📶 Offline messages synced!");
-      }
     };
   } catch (err) {
-    console.error("Sync Error:", err);
+    console.error('Sync failed', err);
   }
-}
-
-function switchTab(tabId) {
-  document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-  document.getElementById(tabId)?.classList.add('active');
-
-  document.querySelectorAll('nav div').forEach(btn => {
-    if (btn.dataset.tab === tabId) {
-      btn.classList.add('active');
-    } else {
-      btn.classList.remove('active');
-    }
-  });
-}
-
-function saveMotivationSettings() {
-  const mins = document.getElementById('motivationInterval').value;
-  const ms = parseInt(mins) * 60000;
-  localStorage.setItem('motivationInterval', ms);
-  alert('✅ Reminder set!');
 }
 
 function scheduleMotivation() {
@@ -160,72 +125,69 @@ function scheduleMotivation() {
     if (Notification.permission === 'granted') {
       const messages = [
         "💪 You're doing great!",
-        "🚶 Time for a quick walk!",
-        "🥗 Healthy food check!",
-        "💧 Stay hydrated!"
+        "🚶‍♂️ Time to move!",
+        "🥦 Eat something healthy!",
+        "💧 Drink water!"
       ];
       new Notification(messages[Math.floor(Math.random() * messages.length)]);
     }
   }, interval);
 }
 
+function saveMotivationSettings() {
+  const val = document.getElementById('motivationInterval').value;
+  localStorage.setItem('motivationInterval', parseInt(val) * 60000);
+  alert("✅ Motivation timer set!");
+}
+
 function toggleModel() {
   selectedModel = selectedModel === 'gpt-4o' ? 'gpt-3.5-turbo' : 'gpt-4o';
-  alert('Model switched to ' + selectedModel);
+  alert("Model switched to " + selectedModel);
 }
 
 function applyThemeFromImage(img) {
   const colorThief = new ColorThief();
   if (img.complete) {
     const [r, g, b] = colorThief.getColor(img);
-    document.documentElement.style.setProperty('--theme-color', `rgb(${r}, ${g}, ${b})`);
+    document.documentElement.style.setProperty('--theme-color', `rgb(${r},${g},${b})`);
   } else {
     img.onload = () => {
       const [r, g, b] = colorThief.getColor(img);
-      document.documentElement.style.setProperty('--theme-color', `rgb(${r}, ${g}, ${b})`);
+      document.documentElement.style.setProperty('--theme-color', `rgb(${r},${g},${b})`);
     };
   }
 }
 
 window.onload = () => {
-  const saved = localStorage.getItem('customWallpaper');
-  if (saved) {
-    document.body.style.backgroundImage = `url(${saved})`;
+  const wallpaper = localStorage.getItem('customWallpaper');
+  if (wallpaper) {
+    document.body.style.backgroundImage = `url(${wallpaper})`;
     const img = new Image();
-    img.src = saved;
+    img.src = wallpaper;
     applyThemeFromImage(img);
   }
 
-  let logs = [];
-  try {
-    logs = JSON.parse(localStorage.getItem('chatLog') || '[]');
-  } catch {
-    localStorage.removeItem('chatLog');
-  }
+  const logs = JSON.parse(localStorage.getItem('chatLog') || '[]');
   logs.forEach(entry => appendMessage(entry.msg, entry.sender));
 
   scheduleMotivation();
   syncMessages();
 
-  const summaryBtn = document.getElementById('summaryBtn');
-  const sendBtn = document.getElementById('sendBtn');
-  const wallpaperInput = document.getElementById('wallpaperInput');
-  const applyWallpaperBtn = document.getElementById('applyWallpaperBtn');
-  const cancelWallpaperBtn = document.getElementById('cancelWallpaperBtn');
-  const navTabs = document.querySelectorAll('nav div');
-
-  summaryBtn?.addEventListener('click', async () => {
-    const apiKey = getApiKey();
-    if (!apiKey) {
-      appendMessage("⚠️ Set your API key in Settings to use summary.", 'bot');
-      return;
+  document.getElementById('sendBtn')?.addEventListener('click', () => {
+    const input = document.getElementById('userInput');
+    const text = input.value.trim();
+    if (text) {
+      sendMessage(text);
+      input.value = '';
     }
+  });
 
-    let logs = [];
-    try {
-      logs = JSON.parse(localStorage.getItem('chatLog') || '[]');
-    } catch {}
-    const summary = logs.map(entry => `[${entry.sender}] ${entry.msg}`).join('\n');
+  document.getElementById('summaryBtn')?.addEventListener('click', async () => {
+    const apiKey = getApiKey();
+    if (!apiKey) return appendMessage("⚠️ Set your API key in Settings.", 'bot');
+
+    const logs = JSON.parse(localStorage.getItem('chatLog') || '[]');
+    const summary = logs.map(e => `[${e.sender}] ${e.msg}`).join('\n');
     appendMessage("📊 Generating summary...", 'bot');
 
     try {
@@ -244,119 +206,63 @@ window.onload = () => {
         })
       });
 
-      if (!res.ok) throw new Error('API error');
       const data = await res.json();
-      appendMessage(data.choices?.[0]?.message?.content || '📝 No summary available.', 'bot');
+      appendMessage(data.choices?.[0]?.message?.content || '📄 No summary available.', 'bot');
     } catch (err) {
       console.error(err);
-      appendMessage('❌ Failed to generate summary.', 'bot');
+      appendMessage("❌ Failed to generate summary.", 'bot');
     }
   });
 
-  sendBtn?.addEventListener('click', () => {
-    const input = document.getElementById('userInput');
-    const text = input.value.trim();
-    if (text) {
-      sendMessage(text);
-      input.value = '';
-    }
-  });
+  // Wallpaper upload logic
+  const wallpaperInput = document.getElementById('wallpaperInput');
+  const applyBtn = document.getElementById('applyWallpaperBtn');
+  const cancelBtn = document.getElementById('cancelWallpaperBtn');
 
-  if (wallpaperInput) {
-    wallpaperInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        const preview = document.getElementById('wallpaperPreview');
-        if (!preview) return;
-        preview.src = reader.result;
-
-        preview.onload = () => {
-          document.getElementById('wallpaperCropperContainer')?.classList.add('show');
-
-          if (cropper) {
-            try { cropper.destroy(); } catch {}
-            cropper = null;
-          }
-
-          setTimeout(() => {
-            try {
-              const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-              const aspectRatio = isMobile ? 1 : 16 / 9;
-
-              cropper = new Cropper(preview, {
-                aspectRatio,
-                viewMode: 1,
-                autoCropArea: 1,
-                dragMode: 'move',
-                guides: true,
-                highlight: true,
-                cropBoxResizable: true,
-                cropBoxMovable: true,
-                responsive: true
-              });
-            } catch (err) {
-              console.error("Cropper error:", err);
-            }
-          }, 100);
-        };
+  wallpaperInput?.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const preview = document.getElementById('wallpaperPreview');
+      preview.src = reader.result;
+      preview.onload = () => {
+        document.getElementById('wallpaperCropperContainer')?.classList.add('show');
+        if (cropper) cropper.destroy();
+        cropper = new Cropper(preview, {
+          aspectRatio: 16 / 9,
+          viewMode: 1,
+          autoCropArea: 1,
+        });
       };
-      reader.readAsDataURL(file);
-    });
-  }
-
-  if (applyWallpaperBtn) {
-    applyWallpaperBtn.addEventListener('click', () => {
-      const preview = document.getElementById('wallpaperPreview');
-      if (!preview || !preview.src || !cropper || typeof cropper.getCroppedCanvas !== 'function') {
-        alert('⚠️ Please select and crop an image first.');
-        return;
-      }
-
-      try {
-        const canvas = cropper.getCroppedCanvas({ width: 1280, height: 720 });
-        if (!canvas) throw new Error('Canvas not created');
-        const dataURL = canvas.toDataURL('image/jpeg', 0.6);
-
-        document.body.style.backgroundImage = `url(${dataURL})`;
-        localStorage.setItem('customWallpaper', dataURL);
-
-        const img = new Image();
-        img.src = dataURL;
-        applyThemeFromImage(img);
-
-        document.getElementById('wallpaperCropperContainer')?.classList.remove('show');
-        cropper.destroy();
-        cropper = null;
-        preview.src = '';
-      } catch (err) {
-        console.error("Wallpaper apply error:", err);
-        alert('❌ Failed to apply wallpaper. Please try again.');
-      }
-    });
-  }
-
-  if (cancelWallpaperBtn) {
-    cancelWallpaperBtn.addEventListener('click', () => {
-      document.getElementById('wallpaperCropperContainer')?.classList.remove('show');
-      const preview = document.getElementById('wallpaperPreview');
-      if (cropper) {
-        try { cropper.destroy(); } catch {}
-        cropper = null;
-      }
-      preview.src = '';
-    });
-  }
-
-  navTabs?.forEach(btn => {
-    btn.onclick = () => switchTab(btn.dataset.tab);
+    };
+    reader.readAsDataURL(file);
   });
 
-  document.addEventListener('keydown', (e) => {
-    const tabs = ['chat', 'dashboard', 'settings'];
-    const active = tabs.findIndex(t => document.getElementById(t).classList.contains('active'));
-    if (e.key === 'ArrowRight') switchTab(tabs[(active + 1) % tabs.length]);
-    if (e.key === 'ArrowLeft') switchTab(tabs[(active + 2) % tabs.length]);
+  applyBtn?.addEventListener('click', () => {
+    if (!cropper) return alert("⚠️ Please select and crop an image.");
+    const canvas = cropper.getCroppedCanvas({ width: 1280, height: 720 });
+    const dataURL = canvas.toDataURL('image/jpeg', 0.6);
+    document.body.style.backgroundImage = `url(${dataURL})`;
+    localStorage.setItem('customWallpaper', dataURL);
+
+    const img = new Image();
+    img.src = dataURL;
+    applyThemeFromImage(img);
+
+    document.getElementById('wallpaperCropperContainer')?.classList.remove('show');
+    cropper.destroy();
+    cropper = null;
+  });
+
+  cancelBtn?.addEventListener('click', () => {
+    document.getElementById('wallpaperCropperContainer')?.classList.remove('show');
+    if (cropper) cropper.destroy();
+    cropper = null;
+    document.getElementById('wallpaperPreview').src = '';
+  });
+
+  document.querySelectorAll('nav div').forEach(btn => {
+    btn.onclick = () => switchTab(btn.dataset.tab);
   });
 };
