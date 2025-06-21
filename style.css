@@ -1,0 +1,117 @@
+:root {
+  --theme-color: #007bff;
+  --text-color: #ffffff;
+  --background-color: #f8f9fa;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-color: #000; /* fallback in case image doesn't load */
+  color: var(--text-color);
+  transition: background 0.5s ease;
+}
+
+
+nav {
+  display: flex;
+  background-color: var(--theme-color);
+  color: white;
+  justify-content: space-around;
+  padding: 1rem 0;
+  font-weight: bold;
+}
+
+nav div {
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+nav div.active {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+main {
+  padding: 1rem;
+}
+
+.tab {
+  display: none;
+}
+
+.tab.active {
+  display: block;
+}
+
+#chatContainer {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+.inputRow {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.inputRow input {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: none;
+}
+
+.inputRow button {
+  padding: 0.5rem 1rem;
+  background-color: var(--theme-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.user, .bot {
+  margin: 0.5rem 0;
+  padding: 0.75rem;
+  border-radius: 8px;
+  max-width: 75%;
+  clear: both;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.user {
+  background-color: rgba(0, 123, 255, 0.3);
+  align-self: flex-end;
+  float: right;
+}
+
+.bot {
+  background-color: rgba(0, 0, 0, 0.1);
+  align-self: flex-start;
+  float: left;
+}
+
+#wallpaperCropperContainer {
+  display: none;
+  margin-top: 1rem;
+}
+
+#wallpaperCropperContainer.show {
+  display: block;
+}
+
+#wallpaperPreview {
+  max-width: 100%;
+  max-height: 300px;
+  margin-bottom: 1rem;
+  display: block;
+}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Offline – Health Chat App</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 2rem;
+      font-family: sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      text-align: center;
+    }
+    h1 {
+      color: #00c853;
+      font-size: 2rem;
+    }
+    p {
+      margin: 1rem auto;
+      max-width: 400px;
+    }
+    img {
+      width: 120px;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+  <img src="icons/icon-192.png" alt="Health Chat Logo" />
+  <h1>⚠️ You're Offline</h1>
+  <p>This app needs an internet connection for full functionality.</p>
+  <p>Don't worry! You can still browse cached content or retry once you're online again.</p>
+  <p>🔄 Trying again in a moment...</p>
+  <script>
+    // Auto-reload when connection comes back
+    window.addEventListener('online', () => location.reload());
+  </script>
+</body>
+</html>
