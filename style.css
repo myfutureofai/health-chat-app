@@ -1,7 +1,14 @@
 :root {
-  --theme-color: #007bff;
+  --theme-color: #00c853;
   --text-color: #ffffff;
-  --background-color: #f8f9fa;
+  --background-color: rgba(255, 255, 255, 0.05);
+  --glass-blur: 15px;
+  --glass-bg: rgba(255, 255, 255, 0.12);
+  --input-bg: rgba(255, 255, 255, 0.2);
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
@@ -11,25 +18,34 @@ body {
   background-position: center center;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  background-color: #000; /* fallback in case image doesn't load */
+  background-color: #000; /* fallback */
   color: var(--text-color);
-  transition: background 0.5s ease;
+  transition: background 0.5s ease, color 0.3s ease;
+  min-height: 100vh;
+  padding-bottom: 60px; /* For bottom nav */
 }
 
-
-nav {
+/* Frosted Nav Bar */
+nav.glass-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  backdrop-filter: blur(var(--glass-blur));
+  background: var(--glass-bg);
   display: flex;
-  background-color: var(--theme-color);
-  color: white;
   justify-content: space-around;
-  padding: 1rem 0;
-  font-weight: bold;
+  padding: 0.75rem 0;
+  z-index: 10;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 nav div {
-  cursor: pointer;
+  color: var(--text-color);
   padding: 0.5rem 1rem;
-  border-radius: 4px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
@@ -37,10 +53,13 @@ nav div.active {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
+/* Main layout sections */
 main {
   padding: 1rem;
+  padding-bottom: 4rem; /* Ensure content doesn't hide behind nav */
 }
 
+/* Tabs */
 .tab {
   display: none;
 }
@@ -49,57 +68,78 @@ main {
   display: block;
 }
 
+/* Chat Container */
 #chatContainer {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  border-radius: 12px;
   padding: 1rem;
-  max-height: 400px;
+  max-height: 60vh;
   overflow-y: auto;
-  margin-bottom: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
+.chat-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-scroll::-webkit-scrollbar-thumb {
+  background: var(--theme-color);
+  border-radius: 3px;
+}
+
+/* Input Row */
 .inputRow {
   display: flex;
   gap: 0.5rem;
+  margin-top: 0.75rem;
 }
 
 .inputRow input {
   flex: 1;
-  padding: 0.5rem;
-  border-radius: 4px;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
   border: none;
+  background: var(--input-bg);
+  color: var(--text-color);
+  outline: none;
 }
 
 .inputRow button {
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 8px;
   background-color: var(--theme-color);
   color: white;
-  border: none;
-  border-radius: 4px;
   cursor: pointer;
+  font-weight: bold;
 }
 
-.user, .bot {
+/* Chat Bubbles */
+.user,
+.bot {
   margin: 0.5rem 0;
-  padding: 0.75rem;
-  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
   max-width: 75%;
   clear: both;
-  background: rgba(0, 0, 0, 0.2);
+  word-wrap: break-word;
+  font-size: 0.95rem;
 }
 
 .user {
-  background-color: rgba(0, 123, 255, 0.3);
+  background-color: rgba(0, 123, 255, 0.4);
   align-self: flex-end;
   float: right;
 }
 
 .bot {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.2);
   align-self: flex-start;
   float: left;
 }
 
+/* Wallpaper Cropper */
 #wallpaperCropperContainer {
   display: none;
   margin-top: 1rem;
@@ -113,5 +153,36 @@ main {
   max-width: 100%;
   max-height: 300px;
   margin-bottom: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
   display: block;
+}
+
+/* Glassy Sections */
+.glass-section {
+  backdrop-filter: blur(var(--glass-blur));
+  background: var(--glass-bg);
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive Layout */
+@media (min-width: 600px) {
+  nav.glass-nav {
+    position: static;
+    flex-direction: row;
+    justify-content: center;
+    background: var(--theme-color);
+    border-top: none;
+  }
+
+  nav div {
+    margin: 0 1rem;
+  }
+
+  body {
+    padding-bottom: 0;
+  }
 }
