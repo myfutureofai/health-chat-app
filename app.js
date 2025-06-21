@@ -4,8 +4,6 @@ let motivationIntervalId;
 const dbName = 'HealthChatDB';
 const storeName = 'unsentMessages';
 const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-
-// Set device-based class
 document.body.classList.add(isMobile ? 'mobile' : 'desktop');
 
 function getApiKey() {
@@ -73,6 +71,7 @@ function appendMessage(msg, sender) {
 }
 
 async function sendMessage(msg) {
+  if (!msg || msg.trim() === '') return;
   appendMessage(msg, 'user');
   if (navigator.onLine) {
     try {
@@ -108,7 +107,6 @@ async function storeUnsentMessage(message) {
 
 async function syncMessages() {
   if (!navigator.onLine) return;
-
   try {
     const db = await openDatabase();
     const tx = db.transaction(storeName, 'readwrite');
@@ -136,13 +134,8 @@ async function syncMessages() {
 function switchTab(tabId) {
   document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
   document.getElementById(tabId)?.classList.add('active');
-
   document.querySelectorAll('nav div').forEach(btn => {
-    if (btn.dataset.tab === tabId) {
-      btn.classList.add('active');
-    } else {
-      btn.classList.remove('active');
-    }
+    btn.classList.toggle('active', btn.dataset.tab === tabId);
   });
 }
 
@@ -200,13 +193,21 @@ window.onload = () => {
     applyThemeFromImage(img);
   }
 
+  // ✅ Avoid duplicate message spam
   let logs = [];
   try {
     logs = JSON.parse(localStorage.getItem('chatLog') || '[]');
   } catch {
     localStorage.removeItem('chatLog');
   }
-  logs.forEach(entry => appendMessage(entry.msg, entry.sender));
+  const seenMessages = new Set();
+  logs.forEach(entry => {
+    const key = `${entry.sender}:${entry.msg}`;
+    if (!seenMessages.has(key)) {
+      appendMessage(entry.msg, entry.sender);
+      seenMessages.add(key);
+    }
+  });
 
   scheduleMotivation();
   syncMessages();
